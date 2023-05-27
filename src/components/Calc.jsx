@@ -37,11 +37,12 @@ const InputGrade = styled.input`
   border: none;
   border-bottom: 2px solid ${({ theme }) => theme.text};
   font-size: medium;
-  color: ${({ theme }) => theme.text};
+  color: ${({ grade }) => getColorFromValue(grade)};
   align-text: center;
   margin: auto;
   text-align: center;
   padding-right: 5px;
+  font-weight: bold;
 `;
 
 const TotalGrade = styled.h1`
@@ -55,14 +56,25 @@ const TotalGrade = styled.h1`
   width: 100%;
   box-shadow: 0px 19.7px 29px rgba(0, 0, 0, 0.048),
     0px 43px 25px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+
+  .plus {
+    color: green;
+  }
+  .minus {
+    color: red;
+  }
 `;
 
-const GradeName = styled.p`
+const GradeName = styled.label`
   font-weight: bold;
 `;
 
 const Page = styled.div`
   height: 100vh;
+  margin-bottom: 30px;
   @media only screen and (max-height: 1250px) {
     height: 100%;
   }
@@ -144,11 +156,13 @@ const Calc = () => {
       <div className="flex-container">
         {subjects.map((subject) => (
           <StyledDiv key={subject.name}>
-            <GradeName>{subject.name}</GradeName>
+            <GradeName htmlFor={subject.name}>{subject.name}</GradeName>
             <div className="grade">
               <InputGrade
                 type="text"
+                id={subject.name}
                 value={grades[subject.name]?.grade || ""}
+                grade={grades[subject.name]?.ruleValue || 0}
                 onChange={(e) =>
                   handleGradeChange(subject.name, e.target.value)
                 }
@@ -169,22 +183,42 @@ const Calc = () => {
 const TotalGradeCalculator = ({ grades }) => {
   const calculateTotalPoints = (grades) => {
     let totalPoints = 0;
+    let totalPlusPoints = 0;
+    let totalMinusPoints = 0;
+
     for (const grade of Object.values(grades)) {
       totalPoints += grade.ruleValue;
+
+      if (grade.ruleValue > 0) {
+        totalPlusPoints += grade.ruleValue;
+      } else if (grade.ruleValue < 0) {
+        totalMinusPoints += grade.ruleValue;
+      }
     }
-    return totalPoints;
+
+    return {
+      totalPoints,
+      totalPlusPoints,
+      totalMinusPoints,
+    };
   };
 
+  const { totalPoints, totalPlusPoints, totalMinusPoints } =
+    calculateTotalPoints(Object.values(grades || {}));
+
   return (
-    <TotalGrade
-      className="main"
-      style={{
-        color: getColorFromValue(
-          calculateTotalPoints(Object.values(grades || {}))
-        ),
-      }}
-    >
-      {calculateTotalPoints(Object.values(grades || {}))}
+    <TotalGrade className="main">
+      {totalMinusPoints !== 0 ? (
+        <span className="minus">{totalMinusPoints}</span>
+      ) : (
+        <span className="minus">-0</span>
+      )}
+      <span style={{ color: "white" }}>{totalPoints}</span>
+      {totalPlusPoints !== 0 ? (
+        <span className="plus">+{totalPlusPoints}</span>
+      ) : (
+        <span className="plus">+0</span>
+      )}
     </TotalGrade>
   );
 };

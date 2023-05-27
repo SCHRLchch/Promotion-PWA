@@ -26,7 +26,7 @@ const themesLib = {
   },
   solarizedDark: {
     background: "#002B36",
-    text: "#839496",
+    text: "#93A1A1",
     cardBackground: "#073642",
   },
   ayuMirage: {
@@ -51,7 +51,7 @@ const themesLib = {
   },
   lavender: {
     background: "#E6E6FA",
-    text: "#000000",
+    text: "#4E007E",
     cardBackground: "#9370DB",
   },
   ebony: {
@@ -96,37 +96,37 @@ const themesLib = {
   },
   mint: {
     background: "#E6F5EC",
-    text: "#2F7D51",
+    text: "#1F692F",
     cardBackground: "#B4D9BB",
   },
   lavender: {
     background: "#F4F1FA",
-    text: "#704A9C",
+    text: "#6A3A8C",
     cardBackground: "#D4C5E6",
   },
   sunshine: {
     background: "#FFF7E0",
-    text: "#F88C0D",
+    text: "#FF7B00",
     cardBackground: "#FFDDA2",
   },
   coral: {
     background: "#FFEAE9",
-    text: "#FF4542",
+    text: "#FF0000",
     cardBackground: "#FFB2AF",
   },
   blush: {
     background: "#FDE7E7",
-    text: "#E04D4D",
+    text: "#D40000",
     cardBackground: "#FFBFC0",
   },
   peach: {
     background: "#FFE8DB",
-    text: "#FF7F50",
+    text: "#FF4C00",
     cardBackground: "#FFC3A6",
   },
   pastel: {
     background: "#FCEDEA",
-    text: "#A081A2",
+    text: "#8E007E",
     cardBackground: "#E8CCE2",
   },
 };
