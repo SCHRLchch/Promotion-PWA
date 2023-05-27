@@ -2,7 +2,7 @@ import React from "react";
 
 import styled from "styled-components";
 
-const Button_File_Change = styled.button`
+const ButtonFileChange = styled.button`
   background-color: ${({ theme }) => theme.cardBackground};
   border: none;
   color: ${({ theme }) => theme.text};
@@ -17,7 +17,7 @@ const Button_File_Change = styled.button`
   }
 `;
 
-const Import_Input = styled.input`
+const ImportInput = styled.input`
   display: none;
 `;
 
@@ -51,12 +51,12 @@ const GradesActions = ({ exportGrades, handleImport, handleReset }) => {
 
   return (
     <div className="flex-container" style={{ marginTop: "10px" }}>
-      <Button_File_Change onClick={handleExport}>Export</Button_File_Change>
-      <Import_Input type="file" id="json" onChange={handleImport} />
+      <ButtonFileChange onClick={handleExport}>Export</ButtonFileChange>
+      <ImportInput type="file" id="json" onChange={handleImport} />
       <Label htmlFor="json">Upload</Label>
-      <Button_File_Change onClick={handleResetConfirmation}>
+      <ButtonFileChange onClick={handleResetConfirmation}>
         Reset
-      </Button_File_Change>
+      </ButtonFileChange>
     </div>
   );
 };

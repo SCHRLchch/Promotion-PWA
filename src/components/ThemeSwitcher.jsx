@@ -3,9 +3,6 @@ import styled from "styled-components";
 
 const ThemeSwitcherContainer = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
   background-color: ${({ theme }) => theme.background};
 `;
 

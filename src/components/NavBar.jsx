@@ -1,6 +1,8 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
+import { AiFillSetting } from "react-icons/ai";
+import { BiMath } from "react-icons/bi";
 
 const Nav = styled.div`
   background-color: ${({ theme }) => theme.cardBackground};
@@ -24,43 +26,61 @@ const NavList = styled.ul`
   display: flex;
   justify-content: center;
   text-align: center;
-  margin: auto;
   padding: 0px;
 `;
 
-const NavItem = styled.li`
-  margin: auto;
-`;
+const NavItem = styled.li``;
 
 const NavLink = styled(Link)`
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-items: baseline;
   text-decoration: none;
   color: ${({ theme }) => theme.text};
-  padding: 10px;
-  border-radius: 5px;
+  padding: 5px;
+  border-radius: 10px;
   transition: background-color 0.3s;
   font-size: 20px;
+  background-color: ${({ active, theme }) =>
+    active ? theme.background : undefined};
 
   &:hover {
-    background-color: ${({ theme }) => theme.background};
+    background-color: ${({ active, theme }) =>
+      active ? theme.background : theme.cardBackground};
   }
 
   &:active {
-    background-color: ${({ theme }) => theme.background};
+    background-color: ${({ active, theme }) =>
+      active ? theme.background : theme.cardBackground};
+  }
+
+  @media only screen and (max-width: 800px) {
+    margin-right: 10px;
   }
 `;
 
 const NavBar = () => {
+  const location = useLocation();
+
   return (
     <Nav>
       <NavList>
         <NavItem>
           <b>
-            <NavLink to="/">Noten</NavLink>
+            <NavLink to="/" active={location.pathname === "/"}>
+              <BiMath style={{ padding: "10px" }} aria-label="Home" />
+            </NavLink>
           </b>
         </NavItem>
         <NavItem>
           <b>
-            <NavLink to="/theme">Theme</NavLink>
+            <NavLink to="/theme" active={location.pathname === "/theme"}>
+              <AiFillSetting
+                style={{ padding: "10px" }}
+                aria-label="Settings"
+              />
+            </NavLink>
           </b>
         </NavItem>
       </NavList>

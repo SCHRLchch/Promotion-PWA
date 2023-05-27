@@ -4,6 +4,7 @@ import subjects from "../data/subjects";
 import { getColorFromValue } from "./ColorCalc";
 import styled from "styled-components";
 import GradesActions from "./GradesActions";
+
 // Styled Components
 const StyledDiv = styled.div`
   background-color: ${({ theme }) => theme.cardBackground};
@@ -68,16 +69,16 @@ const TotalGrade = styled.h1`
   }
 `;
 
-const GradeName = styled.label`
-  font-weight: bold;
-`;
-
 const Page = styled.div`
   height: 100vh;
-  margin-bottom: 30px;
   @media only screen and (max-height: 1250px) {
     height: 100%;
   }
+`;
+
+const GradeName = styled.label`
+  font-weight: bold;
+  text-transform: capitalize;
 `;
 
 const Calc = () => {

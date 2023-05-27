@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import styled, { ThemeProvider } from "styled-components";
 import Calc from "./components/Calc";
 import themes from "./data/themes";
-import ThemePage from "./components/ThemePage";
+import Setting from "./components/Setting";
 import NavBar from "./components/NavBar";
 
 const Container = styled.div`
@@ -36,7 +36,7 @@ function App() {
           <Route
             path="/theme"
             element={
-              <ThemePage selectedTheme={theme} onThemeChange={toggleTheme} />
+              <Setting selectedTheme={theme} onThemeChange={toggleTheme} />
             }
           ></Route>
         </Routes>
