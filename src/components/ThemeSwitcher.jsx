@@ -3,7 +3,6 @@ import styled from "styled-components";
 
 const ThemeSwitcherContainer = styled.div`
   display: flex;
-  background-color: ${({ theme }) => theme.background};
 `;
 
 const Select = styled.select`

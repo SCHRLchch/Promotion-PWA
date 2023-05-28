@@ -5,8 +5,18 @@ import { getColorFromValue } from "./ColorCalc";
 import styled from "styled-components";
 import GradesActions from "./GradesActions";
 
+const PageBackground = styled.div`
+  background-image: ${({ backgroundImage }) =>
+    backgroundImage ? `url(${backgroundImage})` : "none"};
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+`;
+
 // Styled Components
 const StyledDiv = styled.div`
+  opacity: 0.7;
   background-color: ${({ theme }) => theme.cardBackground};
   margin: 30px 10px 30px 20px;
   color: ${({ theme }) => theme.text};
@@ -16,7 +26,7 @@ const StyledDiv = styled.div`
   vertical-align: middle;
   line-height: 35px;
   border-radius: 10px;
-  font-size: larger;
+  font-size: 20px;
   box-shadow: 0px 0px 26.3px rgba(0, 0, 0, 0.024),
     0px 0px 29px rgba(0, 0, 0, 0.047), 0px 0px 27.8px rgba(0, 0, 0, 0.072),
     0px 0px 25px rgba(0, 0, 0, 0.1);
@@ -36,17 +46,17 @@ const InputGrade = styled.input`
   width: 15vw;
   background-color: ${({ theme }) => theme.cardBackground};
   border: none;
-  border-bottom: 2px solid ${({ theme }) => theme.text};
-  font-size: medium;
+  border-bottom: ${({ value }) => (value ? "none" : "2px solid white")};
+  font-size: 30px;
   color: ${({ grade }) => getColorFromValue(grade)};
-  align-text: center;
-  margin: auto;
   text-align: center;
   padding-right: 5px;
   font-weight: bold;
+  margin: auto;
 `;
 
 const TotalGrade = styled.h1`
+  opacity: 0.7;
   height: 100px;
   background-color: ${({ theme }) => theme.cardBackground};
   font-size: 70px;
@@ -63,9 +73,11 @@ const TotalGrade = styled.h1`
 
   .plus {
     color: green;
+    opacity: 1;
   }
   .minus {
     color: red;
+    opacity: 1;
   }
 `;
 
@@ -79,15 +91,24 @@ const Page = styled.div`
 const GradeName = styled.label`
   font-weight: bold;
   text-transform: capitalize;
+  opacity: 1;
 `;
 
 const Calc = () => {
   const [grades, setGrades] = useState({});
+  const [backgroundImage, setBackgroundImage] = useState(null);
 
   useEffect(() => {
     const storedGrades = localStorage.getItem("grades");
     if (storedGrades) {
       setGrades(JSON.parse(storedGrades));
+    }
+  }, []);
+
+  useEffect(() => {
+    const storedImage = localStorage.getItem("backgroundImage");
+    if (storedImage) {
+      setBackgroundImage(storedImage);
     }
   }, []);
 
@@ -151,33 +172,36 @@ const Calc = () => {
   }
 
   return (
-    <Page>
-      <TotalGradeCalculator grades={grades} />
+    <PageBackground backgroundImage={backgroundImage}>
+      <Page>
+        <TotalGradeCalculator grades={grades} />
 
-      <div className="flex-container">
-        {subjects.map((subject) => (
-          <StyledDiv key={subject.name}>
-            <GradeName htmlFor={subject.name}>{subject.name}</GradeName>
-            <div className="grade">
-              <InputGrade
-                type="text"
-                id={subject.name}
-                value={grades[subject.name]?.grade || ""}
-                grade={grades[subject.name]?.ruleValue || 0}
-                onChange={(e) =>
-                  handleGradeChange(subject.name, e.target.value)
-                }
-              />
-            </div>
-          </StyledDiv>
-        ))}
-      </div>
-      <GradesActions
-        exportGrades={exportGrades}
-        handleImport={handleImport}
-        handleReset={handleReset}
-      />
-    </Page>
+        <div className="flex-container">
+          {subjects.map((subject) => (
+            <StyledDiv key={subject.name}>
+              <GradeName htmlFor={subject.name}>{subject.name}</GradeName>
+              <div className="grade">
+                <InputGrade
+                  type="text"
+                  id={subject.name}
+                  value={grades[subject.name]?.grade || ""}
+                  grade={grades[subject.name]?.ruleValue || 0}
+                  onChange={(e) =>
+                    handleGradeChange(subject.name, e.target.value)
+                  }
+                  active={grades[subject.name]?.grade ? 1 : 0}
+                />
+              </div>
+            </StyledDiv>
+          ))}
+        </div>
+        <GradesActions
+          exportGrades={exportGrades}
+          handleImport={handleImport}
+          handleReset={handleReset}
+        />
+      </Page>
+    </PageBackground>
   );
 };
 
