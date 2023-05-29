@@ -1,5 +1,4 @@
 import React from "react";
-
 import styled from "styled-components";
 
 const ButtonFileChange = styled.button`
@@ -51,11 +50,11 @@ const GradesActions = ({ exportGrades, handleImport, handleReset }) => {
 
   return (
     <div className="flex-container" style={{ marginTop: "10px" }}>
-      <ButtonFileChange onClick={handleExport}>Export</ButtonFileChange>
+      <ButtonFileChange onClick={handleExport}>Exportieren</ButtonFileChange>
       <ImportInput type="file" id="json" onChange={handleImport} />
-      <Label htmlFor="json">Upload</Label>
+      <Label htmlFor="json">Hochladen</Label>
       <ButtonFileChange onClick={handleResetConfirmation}>
-        Reset
+        Zurücksetzen
       </ButtonFileChange>
     </div>
   );

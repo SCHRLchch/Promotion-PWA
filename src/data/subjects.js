@@ -1,7 +1,7 @@
 // Subjects
 export default [
   { name: "Biologie" },
-  { name: "BG/Music" },
+  { name: "BG/Musik" },
   { name: "Chemie" },
   { name: "Deutsch" },
   { name: "Englisch" },

@@ -3,6 +3,7 @@ import ThemeSwitcher from "./ThemeSwitcher";
 import themes from "../data/themes";
 import styled from "styled-components";
 import GradeTable from "./GradeTable";
+
 const PageBackground = styled.div`
   background-image: ${({ backgroundImage }) =>
     backgroundImage ? `url(${backgroundImage})` : "none"};
@@ -25,11 +26,10 @@ const Page = styled.div`
       ? "none"
       : "0px 0px 13.8px rgba(0, 0, 0, 0.02), 0px 0px 33.3px rgba(0, 0, 0, 0.028), 0px 0px 62.6px rgba(0, 0, 0, 0.035), 0px 0px 111.7px rgba(0, 0, 0, 0.042), 0px 0px 208.9px rgba(0, 0, 0, 0.05), 0px 0px 500px rgba(0, 0, 0, 0.07)"};
 
-  @media only screen and (max-height: 1250px) {
+  @media only screen and (max-height: 610px) {
     height: 100%;
   }
 `;
-
 const Label = styled.label`
   background-color: ${({ theme }) => theme.cardBackground};
   border: none;
@@ -47,7 +47,7 @@ const Label = styled.label`
 const Title = styled.h1`
   margin: 20px 10px 20px 10px;
   font-weight: bold;
-  color: white;
+  color: ${({ theme }) => theme.text};
   opacity: 1;
   @media only screen and (max-height: 1250px) {
     font-size: 30px;
@@ -57,7 +57,7 @@ const Title = styled.h1`
 const SubTitle = styled.h2`
   margin: 20px 10px 20px 10px;
   font-weight: bold;
-  color: white;
+  color: ${({ theme }) => theme.text};
   opacity: 1;
   @media only screen and (max-height: 1250px) {
     font-size: 20px;
@@ -75,7 +75,7 @@ const Button = styled.button`
   border-radius: 20px;
   box-shadow: 100px 100px 80px rgba(0, 0, 0, 0.07);
   margin: 5px;
-  width: 180px;
+  width: 216px;
 `;
 
 const Setting = ({ selectedTheme, onThemeChange }) => {
@@ -116,17 +116,18 @@ const Setting = ({ selectedTheme, onThemeChange }) => {
       localStorage.removeItem("backgroundImage");
     }
   };
+
   return (
     <PageBackground backgroundImage={backgroundImage}>
       <Page backgroundImage={backgroundImage}>
-        <Title>Themes</Title>
+        <Title>Themen</Title>
         <ThemeSwitcher
           themes={themes}
           selectedTheme={selectedTheme}
           onThemeChange={onThemeChange}
         />
-        <SubTitle>Define you Background</SubTitle>
-        <Label htmlFor="pics">Upload your image</Label>
+        <SubTitle>Hintergrundsbild</SubTitle>
+        <Label htmlFor="pics">Laden sie Bild hoch</Label>
         <input
           id="pics"
           type="file"
@@ -134,8 +135,10 @@ const Setting = ({ selectedTheme, onThemeChange }) => {
           onChange={handleImageUpload}
           style={{ display: "none" }}
         />
-        <Button onClick={handleBackgroundReset}>Reset Background</Button>
-        <Title>Grade Calculator</Title>
+        <Button onClick={handleBackgroundReset}>
+          Hintergrund zurücksetzen
+        </Button>
+        <Title>Note Berechner</Title>
         <GradeTable />
       </Page>
     </PageBackground>

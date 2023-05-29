@@ -29,6 +29,7 @@ const Items = styled.div`
   justify-content: space-around;
   margin-top: 20px;
   margin-bottom: 70px;
+  border-radius: 10px;
   @media only screen and (max-height: 1250px) {
     flex-direction: column;
   }
@@ -75,7 +76,7 @@ const GradeTable = () => {
     }
     const requiredGrade = desiredGrade * (weightSum + 1) - gradeSum;
     if (requiredGrade.toFixed(3) > 6.0) {
-      return "Impossible in one";
+      return "Impossible";
     }
     return requiredGrade.toFixed(3);
   };
@@ -109,7 +110,7 @@ const GradeTable = () => {
   };
 
   const resetGrades = () => {
-    const confirm = window.confirm("Reset Grades?");
+    const confirm = window.confirm("Noten rücksetzen?");
     if (confirm) {
       setGrades([]);
       setWeights([]);
@@ -121,8 +122,8 @@ const GradeTable = () => {
       <Table>
         <thead>
           <tr>
-            <TableHeader>Grade</TableHeader>
-            <TableHeader>Weight</TableHeader>
+            <TableHeader>Noten</TableHeader>
+            <TableHeader>Gewicht</TableHeader>
           </tr>
         </thead>
         <tbody>
@@ -145,7 +146,7 @@ const GradeTable = () => {
                 />
               </TableCell>
               <TableCell>
-                <button onClick={() => removeRow(index)}>Remove</button>
+                <button onClick={() => removeRow(index)}>Entfernen</button>
               </TableCell>
             </TableRow>
           ))}
@@ -153,14 +154,16 @@ const GradeTable = () => {
       </Table>
       <Items>
         <button onClick={addRow} style={{ marginBottom: "10px" }}>
-          Add Row
+          Reihe adden
         </button>
         <button onClick={resetGrades} style={{ marginBottom: "10px" }}>
-          Reset Grades
+          Noten zurücksetzen
         </button>
-        <h3 style={{ marginBottom: "10px" }}>Average: {calculateAverage()}</h3>
+        <h3 style={{ marginBottom: "10px" }}>
+          Durchschnitt: {calculateAverage()}
+        </h3>
         <div style={{ marginBottom: "10px" }}>
-          <label htmlFor="desiredGrade">Desired Grade:</label>
+          <label htmlFor="desiredGrade">Gewünschter Note:</label>
           <input
             type="text"
             id="desiredGrade"
@@ -168,8 +171,10 @@ const GradeTable = () => {
             onChange={(e) => setDesiredGrade(e.target.value)}
           />
         </div>
+
         <h3 style={{ marginBottom: "10px" }}>
-          Required Grade: {calculateRequiredGrade()}
+          Benötigte Note:
+          <span style={{ color: "red" }}> {calculateRequiredGrade()}</span>
         </h3>
       </Items>
     </div>

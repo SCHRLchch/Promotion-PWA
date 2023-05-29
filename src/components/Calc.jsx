@@ -53,6 +53,9 @@ const InputGrade = styled.input`
   padding-right: 5px;
   font-weight: bold;
   margin: auto;
+  @media only screen and (max-width: 800px) {
+    font-size: 20px;
+  }
 `;
 
 const TotalGrade = styled.h1`
