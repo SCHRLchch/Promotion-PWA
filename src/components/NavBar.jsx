@@ -20,6 +20,9 @@ const Nav = styled.div`
     0px 0px 88.6px rgba(0, 0, 0, 0.022), 0px 0px 125.7px rgba(0, 0, 0, 0.025),
     0px 0px 182.5px rgba(0, 0, 0, 0.028), 0px 0px 281.3px rgba(0, 0, 0, 0.032),
     0px 0px 500px rgba(0, 0, 0, 0.04);
+  @media only screen and (max-width: 300px) {
+    display: none;
+  }
 `;
 
 const NavList = styled.ul`
@@ -76,7 +79,7 @@ const NavBar = () => {
         </NavItem>
         <NavItem>
           <b>
-            <NavLink to="/theme" active={location.pathname === "/theme"}>
+            <NavLink to="/settings" active={location.pathname === "/settings"}>
               <AiFillSetting
                 style={{ padding: "10px" }}
                 aria-label="Settings"

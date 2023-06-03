@@ -11,6 +11,7 @@ const TableHeader = styled.th`
   background-color: ${({ theme }) => theme.cardBackground};
   color: ${({ theme }) => theme.text};
   padding: 8px;
+  border-radius: 20px;
 `;
 
 const TableRow = styled.tr`
@@ -46,6 +47,20 @@ const InputGrade = styled.input`
   font-weight: bold;
   margin: auto;
   border-radius: 20px;
+`;
+
+const Button = styled.button`
+  background-color: ${({ theme }) => theme.cardBackground};
+  border: none;
+  color: ${({ theme }) => theme.text};
+  padding: 10px 20px;
+  font-weight: bold;
+  margin: 0px 20px 0px 0px;
+  font-size: 15px;
+  border-radius: 20px;
+  box-shadow: 100px 100px 80px rgba(0, 0, 0, 0.07);
+  margin: 5px;
+  width: 216px;
 `;
 
 const GradeTable = () => {
@@ -146,24 +161,24 @@ const GradeTable = () => {
                 />
               </TableCell>
               <TableCell>
-                <button onClick={() => removeRow(index)}>Entfernen</button>
+                <Button onClick={() => removeRow(index)}>Entfernen</Button>
               </TableCell>
             </TableRow>
           ))}
         </tbody>
       </Table>
       <Items>
-        <button onClick={addRow} style={{ marginBottom: "10px" }}>
+        <Button onClick={addRow} style={{ marginBottom: "10px" }}>
           Reihe adden
-        </button>
-        <button onClick={resetGrades} style={{ marginBottom: "10px" }}>
+        </Button>
+        <Button onClick={resetGrades} style={{ marginBottom: "10px" }}>
           Noten zurücksetzen
-        </button>
+        </Button>
         <h3 style={{ marginBottom: "10px" }}>
           Durchschnitt: {calculateAverage()}
         </h3>
         <div style={{ marginBottom: "10px" }}>
-          <label htmlFor="desiredGrade">Gewünschter Note:</label>
+          <label htmlFor="desiredGrade">Gewünschte Note:</label>
           <input
             type="text"
             id="desiredGrade"

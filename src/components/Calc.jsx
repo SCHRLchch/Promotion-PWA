@@ -4,6 +4,15 @@ import subjects from "../data/subjects";
 import { getColorFromValue } from "./ColorCalc";
 import styled from "styled-components";
 import GradesActions from "./GradesActions";
+import {
+  addDoc,
+  collection,
+  getDocs,
+  Timestamp,
+  writeBatch,
+} from "firebase/firestore";
+import { auth, db } from "../config/firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 const PageBackground = styled.div`
   background-image: ${({ backgroundImage }) =>
@@ -30,6 +39,10 @@ const StyledDiv = styled.div`
   box-shadow: 0px 0px 26.3px rgba(0, 0, 0, 0.024),
     0px 0px 29px rgba(0, 0, 0, 0.047), 0px 0px 27.8px rgba(0, 0, 0, 0.072),
     0px 0px 25px rgba(0, 0, 0, 0.1);
+
+  @media only screen and (max-width: 300px) {
+    display: none;
+  }
   @media only screen and (max-width: 800px) {
     flex-basis: 35%;
     margin: 20px 15px 20px 15px;
@@ -59,6 +72,7 @@ const InputGrade = styled.input`
 `;
 
 const TotalGrade = styled.h1`
+  color: ${({ theme }) => theme.text};
   opacity: 0.7;
   height: 100px;
   background-color: ${({ theme }) => theme.cardBackground};
@@ -77,18 +91,36 @@ const TotalGrade = styled.h1`
   .plus {
     color: green;
     opacity: 1;
+    @media only screen and (max-width: 800px) {
+      font-size: 25px;
+    }
   }
   .minus {
     color: red;
     opacity: 1;
+    @media only screen and (max-width: 800px) {
+      font-size: 25px;
+    }
+  }
+`;
+
+const ButtonFileChange = styled.button`
+  background-color: ${({ theme }) => theme.cardBackground};
+  border: none;
+  color: ${({ theme }) => theme.text};
+  margin-right: 20px;
+  font-weight: bold;
+  padding: 10px 20px;
+  font-size: 15px;
+  border-radius: 10px;
+  box-shadow: 100px 100px 80px rgba(0, 0, 0, 0.07);
+  @media only screen and (max-width: 800px) {
+    display: none;
   }
 `;
 
 const Page = styled.div`
-  height: 100vh;
-  @media only screen and (max-height: 1250px) {
-    height: 100%;
-  }
+  height: auto;
 `;
 
 const GradeName = styled.label`
@@ -97,9 +129,75 @@ const GradeName = styled.label`
   opacity: 1;
 `;
 
+const Container = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  background-color: ${({ theme }) => theme.Background};
+`;
+
 const Calc = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, loading] = useAuthState(auth);
+  useEffect(() => {
+    setIsLoggedIn(!!user);
+  }, [user]);
+  const UID = auth.currentUser.uid;
+
   const [grades, setGrades] = useState({});
   const [backgroundImage, setBackgroundImage] = useState(null);
+  const gradeRef = collection(db, "users", UID, "grades");
+  const deleteAllExceptLast = async () => {
+    try {
+      const snapshot = await getDocs(gradeRef);
+
+      if (snapshot.size <= 1) {
+        console.log("No documents to delete or only one document exists.");
+        return;
+      }
+
+      const documents = snapshot.docs;
+      const lastDocument = documents[documents.length - 1];
+
+      const batch = writeBatch(db);
+      documents.forEach((doc) => {
+        if (doc.id !== lastDocument.id) {
+          batch.delete(doc.ref);
+        }
+      });
+
+      await batch.commit();
+      console.log("Documents deleted successfully except for the last one.");
+    } catch (err) {
+      console.error("Error deleting documents:", err);
+    }
+  };
+
+  useEffect(() => {
+    const getGrade = async () => {
+      try {
+        const data = await getDocs(gradeRef);
+        const timestamp = Timestamp.now();
+        const filteredData = data.docs.map((doc) => ({
+          ...doc.data(),
+          timestamp: timestamp,
+          id: doc.id,
+        }));
+        localStorage.setItem(
+          "grades",
+          JSON.stringify(filteredData[filteredData.length - 1])
+        );
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    getGrade();
+  }, [grades]);
 
   useEffect(() => {
     const storedGrades = localStorage.getItem("grades");
@@ -114,10 +212,6 @@ const Calc = () => {
       setBackgroundImage(storedImage);
     }
   }, []);
-
-  useEffect(() => {
-    localStorage.setItem("grades", JSON.stringify(grades));
-  }, [grades]);
 
   const handleGradeChange = (subject, grade) => {
     const parsedGrade = grade;
@@ -155,7 +249,14 @@ const Calc = () => {
 
     reader.readAsText(file);
   };
-
+  const onSubmit = async () => {
+    try {
+      await addDoc(gradeRef, grades);
+      deleteAllExceptLast();
+    } catch (err) {
+      console.error(err);
+    }
+  };
   function handleReset() {
     setGrades({});
   }
@@ -179,7 +280,7 @@ const Calc = () => {
       <Page>
         <TotalGradeCalculator grades={grades} />
 
-        <div className="flex-container">
+        <Container>
           {subjects.map((subject) => (
             <StyledDiv key={subject.name}>
               <GradeName htmlFor={subject.name}>{subject.name}</GradeName>
@@ -197,11 +298,13 @@ const Calc = () => {
               </div>
             </StyledDiv>
           ))}
-        </div>
+        </Container>
+
         <GradesActions
           exportGrades={exportGrades}
           handleImport={handleImport}
           handleReset={handleReset}
+          onSubmit={onSubmit}
         />
       </Page>
     </PageBackground>
@@ -215,15 +318,13 @@ const TotalGradeCalculator = ({ grades }) => {
     let totalMinusPoints = 0;
 
     for (const grade of Object.values(grades)) {
-      totalPoints += grade.ruleValue;
-
       if (grade.ruleValue > 0) {
         totalPlusPoints += grade.ruleValue;
       } else if (grade.ruleValue < 0) {
         totalMinusPoints += grade.ruleValue;
       }
     }
-
+    totalPoints = totalMinusPoints + totalPlusPoints;
     return {
       totalPoints,
       totalPlusPoints,
@@ -241,7 +342,7 @@ const TotalGradeCalculator = ({ grades }) => {
       ) : (
         <span className="minus">-0</span>
       )}
-      <span style={{ color: "white" }}>{totalPoints}</span>
+      <span>{totalPoints}</span>
       {totalPlusPoints !== 0 ? (
         <span className="plus">+{totalPlusPoints}</span>
       ) : (

@@ -3,6 +3,8 @@ import ThemeSwitcher from "./ThemeSwitcher";
 import themes from "../data/themes";
 import styled from "styled-components";
 import GradeTable from "./GradeTable";
+import { auth } from "../config/firebase";
+import { signOut } from "firebase/auth";
 
 const PageBackground = styled.div`
   background-image: ${({ backgroundImage }) =>
@@ -25,9 +27,9 @@ const Page = styled.div`
     backgroundImage
       ? "none"
       : "0px 0px 13.8px rgba(0, 0, 0, 0.02), 0px 0px 33.3px rgba(0, 0, 0, 0.028), 0px 0px 62.6px rgba(0, 0, 0, 0.035), 0px 0px 111.7px rgba(0, 0, 0, 0.042), 0px 0px 208.9px rgba(0, 0, 0, 0.05), 0px 0px 500px rgba(0, 0, 0, 0.07)"};
-
-  @media only screen and (max-height: 610px) {
-    height: 100%;
+  @media only screen and (max-height: 1080px) {
+    height: 100vh;
+    width: auto;
   }
 `;
 const Label = styled.label`
@@ -117,6 +119,18 @@ const Setting = ({ selectedTheme, onThemeChange }) => {
     }
   };
 
+  const logout = async () => {
+    try {
+      const confirmation = window.confirm("Log Out?");
+      if (confirmation) {
+        await signOut(auth);
+        window.location.href = "/";
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <PageBackground backgroundImage={backgroundImage}>
       <Page backgroundImage={backgroundImage}>
@@ -140,6 +154,19 @@ const Setting = ({ selectedTheme, onThemeChange }) => {
         </Button>
         <Title>Note Berechner</Title>
         <GradeTable />
+        <Button
+          onClick={logout}
+          style={{
+            justifyContent: "center",
+            alignContent: "center",
+            display: "flex",
+            marginLeft: "auto",
+            marginRight: "auto",
+            marginBottom: "50px",
+          }}
+        >
+          Log Out
+        </Button>
       </Page>
     </PageBackground>
   );

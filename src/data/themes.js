@@ -49,11 +49,6 @@ const themesLib = {
     text: "#D6DEEB",
     cardBackground: "#1D3B53",
   },
-  lavender: {
-    background: "#E6E6FA",
-    text: "#4E007E",
-    cardBackground: "#9370DB",
-  },
   ebony: {
     background: "#222222",
     text: "#FFFFFF",

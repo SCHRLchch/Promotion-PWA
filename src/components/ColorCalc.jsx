@@ -1,48 +1,24 @@
 function getColorFromValue(value) {
-  if (value <= 0) {
-    return "darkred";
-  } else if (value < 0.25) {
-    return "orangered";
-  } else if (value < 0.5) {
-    return "goldenrod";
-  } else if (value < 0.75) {
-    return "darkgoldenrod";
-  } else if (value < 1) {
-    return "orange";
-  } else if (value < 1.25) {
-    return "lime";
-  } else if (value < 1.5) {
-    return "limegreen";
-  } else if (value < 1.75) {
-    return "mediumseagreen";
-  } else if (value < 2) {
-    return "green";
+  if (value === 0) {
+    return "white";
+  } else if (value < 0) {
+    return "red";
   } else {
-    return "darkgreen";
+    const greenValue = Math.floor((value / 0.5) * 100);
+    return `rgb(0, ${greenValue}, 0)`;
   }
 }
 
 function getColorFromTotalValue(value) {
-  if (value <= 0) {
-    return "darkred";
-  } else if (value < 0.25) {
-    return "orangered";
-  } else if (value < 0.5) {
-    return "goldenrod";
-  } else if (value < 0.75) {
-    return "darkgoldenrod";
-  } else if (value < 1) {
-    return "orange";
-  } else if (value < 1.25) {
-    return "lime";
-  } else if (value < 1.5) {
-    return "limegreen";
-  } else if (value < 1.75) {
-    return "mediumseagreen";
-  } else if (value < 2) {
+  if (value === 0) {
+    return "white";
+  } else if (value >= 2) {
     return "green";
+  } else if (value < 0) {
+    return "red";
   } else {
-    return "darkgreen";
+    const greenValue = Math.floor((2 / value) * 255);
+    return `rgb(0, ${greenValue}, 0)`;
   }
 }
 
