@@ -10,6 +10,8 @@ import {
   getDocs,
   Timestamp,
   writeBatch,
+  query,
+  orderBy,
 } from "firebase/firestore";
 import { auth, db } from "../config/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -77,16 +79,17 @@ const TotalGrade = styled.h1`
   height: 100px;
   background-color: ${({ theme }) => theme.cardBackground};
   font-size: 70px;
-  text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center; /* Add this line to vertically align the content */
+
   vertical-align: middle;
   line-height: 100px;
   border-radius: 0px 0px 20px 20px;
   width: 100%;
   box-shadow: 0px 19.7px 29px rgba(0, 0, 0, 0.048),
     0px 43px 25px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
 
   .plus {
     color: green;
@@ -101,21 +104,6 @@ const TotalGrade = styled.h1`
     @media only screen and (max-width: 800px) {
       font-size: 25px;
     }
-  }
-`;
-
-const ButtonFileChange = styled.button`
-  background-color: ${({ theme }) => theme.cardBackground};
-  border: none;
-  color: ${({ theme }) => theme.text};
-  margin-right: 20px;
-  font-weight: bold;
-  padding: 10px 20px;
-  font-size: 15px;
-  border-radius: 10px;
-  box-shadow: 100px 100px 80px rgba(0, 0, 0, 0.07);
-  @media only screen and (max-width: 800px) {
-    display: none;
   }
 `;
 
@@ -142,6 +130,7 @@ const Container = styled.div`
 
 const Calc = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // Add isLoading state
   const [user, loading] = useAuthState(auth);
   useEffect(() => {
     setIsLoggedIn(!!user);
@@ -151,9 +140,12 @@ const Calc = () => {
   const [grades, setGrades] = useState({});
   const [backgroundImage, setBackgroundImage] = useState(null);
   const gradeRef = collection(db, "users", UID, "grades");
+
   const deleteAllExceptLast = async () => {
     try {
-      const snapshot = await getDocs(gradeRef);
+      const snapshot = await getDocs(
+        query(collection(db, "users", UID, "grades"), orderBy("timestamp"))
+      );
 
       if (snapshot.size <= 1) {
         console.log("No documents to delete or only one document exists.");
@@ -165,7 +157,7 @@ const Calc = () => {
 
       const batch = writeBatch(db);
       documents.forEach((doc) => {
-        if (doc.id !== lastDocument.id) {
+        if (doc.data().timestamp !== lastDocument.data().timestamp) {
           batch.delete(doc.ref);
         }
       });
@@ -180,30 +172,38 @@ const Calc = () => {
   useEffect(() => {
     const getGrade = async () => {
       try {
-        const data = await getDocs(gradeRef);
-        const timestamp = Timestamp.now();
-        const filteredData = data.docs.map((doc) => ({
+        const lastGrade = localStorage.getItem("lastGrade");
+        const querySnapshot = await getDocs(
+          query(
+            collection(db, "users", UID, "grades"),
+            orderBy("timestamp"),
+            startAfter(lastGrade ? lastGrade.timestamp : null)
+          )
+        );
+
+        const gradesData = querySnapshot.docs.map((doc) => ({
           ...doc.data(),
-          timestamp: timestamp,
           id: doc.id,
         }));
-        localStorage.setItem(
-          "grades",
-          JSON.stringify(filteredData[filteredData.length - 1])
-        );
+
+        if (gradesData.length > 0) {
+          const timestamp = gradesData[gradesData.length - 1].timestamp;
+          localStorage.setItem("lastGrade", { timestamp });
+
+          setGrades((prevGrades) => ({
+            ...prevGrades,
+            ...gradesData.reduce((acc, grade) => {
+              acc[grade.subject] = grade;
+              return acc;
+            }, {}),
+          }));
+        }
       } catch (err) {
         console.error(err);
       }
     };
 
     getGrade();
-  }, [grades]);
-
-  useEffect(() => {
-    const storedGrades = localStorage.getItem("grades");
-    if (storedGrades) {
-      setGrades(JSON.parse(storedGrades));
-    }
   }, []);
 
   useEffect(() => {
@@ -251,12 +251,14 @@ const Calc = () => {
   };
   const onSubmit = async () => {
     try {
-      await addDoc(gradeRef, grades);
       deleteAllExceptLast();
+      await addDoc(gradeRef, grades);
+      await addDoc(gradeRef, grades);
     } catch (err) {
       console.error(err);
     }
   };
+
   function handleReset() {
     setGrades({});
   }
@@ -313,9 +315,9 @@ const Calc = () => {
 
 const TotalGradeCalculator = ({ grades }) => {
   const calculateTotalPoints = (grades) => {
-    let totalPoints = 0;
-    let totalPlusPoints = 0;
-    let totalMinusPoints = 0;
+    let totalPoints = 0.0;
+    let totalPlusPoints = 0.0;
+    let totalMinusPoints = 0.0;
 
     for (const grade of Object.values(grades)) {
       if (grade.ruleValue > 0) {
@@ -325,6 +327,9 @@ const TotalGradeCalculator = ({ grades }) => {
       }
     }
     totalPoints = totalMinusPoints + totalPlusPoints;
+    totalMinusPoints = Number(totalMinusPoints).toFixed(1);
+    totalPlusPoints = Number(totalPlusPoints).toFixed(1);
+    totalPoints = Number(totalPoints).toFixed(1);
     return {
       totalPoints,
       totalPlusPoints,
@@ -340,13 +345,13 @@ const TotalGradeCalculator = ({ grades }) => {
       {totalMinusPoints !== 0 ? (
         <span className="minus">{totalMinusPoints}</span>
       ) : (
-        <span className="minus">-0</span>
+        <span className="minus">-0.0</span>
       )}
       <span>{totalPoints}</span>
       {totalPlusPoints !== 0 ? (
         <span className="plus">+{totalPlusPoints}</span>
       ) : (
-        <span className="plus">+0</span>
+        <span className="plus">+0.0</span>
       )}
     </TotalGrade>
   );

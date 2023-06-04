@@ -4,7 +4,7 @@ function getColorFromValue(value) {
   } else if (value < 0) {
     return "red";
   } else {
-    const greenValue = Math.floor((value / 0.5) * 100);
+    const greenValue = Math.floor((value / 0.5) * 255);
     return `rgb(0, ${greenValue}, 0)`;
   }
 }
@@ -17,7 +17,7 @@ function getColorFromTotalValue(value) {
   } else if (value < 0) {
     return "red";
   } else {
-    const greenValue = Math.floor((2 / value) * 255);
+    const greenValue = Math.floor((2 / value) * 255 + 100);
     return `rgb(0, ${greenValue}, 0)`;
   }
 }

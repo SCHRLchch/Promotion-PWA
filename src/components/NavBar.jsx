@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { AiFillSetting } from "react-icons/ai";
 import { BiMath } from "react-icons/bi";
+import PWAInstall from "./PWAInstall";
 
 const Nav = styled.div`
   background-color: ${({ theme }) => theme.cardBackground};
@@ -33,7 +34,9 @@ const NavList = styled.ul`
   padding: 0px;
 `;
 
-const NavItem = styled.li``;
+const NavItem = styled.li`
+  height: 50px;
+`;
 
 const NavLink = styled(Link)`
   display: flex;
@@ -86,6 +89,11 @@ const NavBar = () => {
               />
             </NavLink>
           </b>
+        </NavItem>
+        <NavItem>
+          <NavLink>
+            <PWAInstall />
+          </NavLink>
         </NavItem>
       </NavList>
     </Nav>

@@ -27,8 +27,13 @@ const Page = styled.div`
     backgroundImage
       ? "none"
       : "0px 0px 13.8px rgba(0, 0, 0, 0.02), 0px 0px 33.3px rgba(0, 0, 0, 0.028), 0px 0px 62.6px rgba(0, 0, 0, 0.035), 0px 0px 111.7px rgba(0, 0, 0, 0.042), 0px 0px 208.9px rgba(0, 0, 0, 0.05), 0px 0px 500px rgba(0, 0, 0, 0.07)"};
-  @media only screen and (max-height: 1080px) {
+  @media only screen and (min-height: 700px) {
     height: 100vh;
+    width: auto;
+  }
+
+  @media only screen and (max-height: 700px) {
+    height: 100%;
     width: auto;
   }
 `;
@@ -162,7 +167,7 @@ const Setting = ({ selectedTheme, onThemeChange }) => {
             display: "flex",
             marginLeft: "auto",
             marginRight: "auto",
-            marginBottom: "50px",
+            marginBottom: "70px",
           }}
         >
           Log Out

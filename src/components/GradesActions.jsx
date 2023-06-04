@@ -12,7 +12,7 @@ const ButtonFileChange = styled.button`
   border-radius: 10px;
   box-shadow: 100px 100px 80px rgba(0, 0, 0, 0.07);
   @media only screen and (max-width: 800px) {
-    display: none;
+    margin-bottom: 20px;
   }
   &:active {
     box-shadow: 2.8px 2.8px 2.2px rgba(0, 0, 0, 0.042),
@@ -48,7 +48,7 @@ const Label = styled.label`
   border-radius: 10px;
   box-shadow: 100px 100px 80px rgba(0, 0, 0, 0.07);
   @media only screen and (max-width: 800px) {
-    display: none;
+    margin-bottom: 20px;
   }
 
   &:active {
@@ -79,6 +79,9 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   background-color: ${({ theme }) => theme.Background};
+  @media only screen and (max-width: 500px) {
+    justify-content: baseline;
+  }
 `;
 
 const GradesActions = ({
@@ -105,10 +108,7 @@ const GradesActions = ({
       <ButtonFileChange onClick={onSubmit}>Submit to Database</ButtonFileChange>
       <ImportInput type="file" id="json" onChange={handleImport} />
       <Label htmlFor="json">Hochladen</Label>
-      <ButtonFileChange
-        onClick={handleResetConfirmation}
-        style={{ margin: "0px" }}
-      >
+      <ButtonFileChange onClick={handleResetConfirmation}>
         Zurücksetzen
       </ButtonFileChange>
     </Container>
