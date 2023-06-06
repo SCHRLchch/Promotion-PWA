@@ -129,8 +129,9 @@ const Container = styled.div`
 `;
 
 const Calc = () => {
+  // eslint-disable-next-line
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isLoading, setIsLoading] = useState(true); // Add isLoading state
+  // eslint-disable-next-line
   const [user, loading] = useAuthState(auth);
   useEffect(() => {
     setIsLoggedIn(!!user);
@@ -168,42 +169,31 @@ const Calc = () => {
       console.error("Error deleting documents:", err);
     }
   };
-
-  useEffect(() => {
-    const getGrade = async () => {
-      try {
-        const lastGrade = localStorage.getItem("lastGrade");
-        const querySnapshot = await getDocs(
-          query(
-            collection(db, "users", UID, "grades"),
-            orderBy("timestamp"),
-            startAfter(lastGrade ? lastGrade.timestamp : null)
-          )
-        );
-
-        const gradesData = querySnapshot.docs.map((doc) => ({
-          ...doc.data(),
-          id: doc.id,
-        }));
-
-        if (gradesData.length > 0) {
-          const timestamp = gradesData[gradesData.length - 1].timestamp;
-          localStorage.setItem("lastGrade", { timestamp });
-
-          setGrades((prevGrades) => ({
-            ...prevGrades,
-            ...gradesData.reduce((acc, grade) => {
-              acc[grade.subject] = grade;
-              return acc;
-            }, {}),
-          }));
-        }
-      } catch (err) {
-        console.error(err);
+  const getGrade = async () => {
+    try {
+      const data = await getDocs(gradeRef);
+      const timestamp = Timestamp.now();
+      const filteredData = data.docs.map((doc) => ({
+        ...doc.data(),
+        timestamp: timestamp,
+        id: doc.id,
+      }));
+      localStorage.setItem(
+        "grades",
+        JSON.stringify(filteredData[filteredData.length - 1])
+      );
+      const storedGrades = localStorage.getItem("grades");
+      if (storedGrades) {
+        setGrades(JSON.parse(storedGrades));
       }
-    };
-
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  useEffect(() => {
     getGrade();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -233,22 +223,6 @@ const Calc = () => {
     }
   };
 
-  //Import, Reset, Export
-  const handleImport = (event) => {
-    const file = event.target.files[0];
-    const reader = new FileReader();
-
-    reader.onload = (e) => {
-      try {
-        const importedGrades = JSON.parse(e.target.result);
-        setGrades(importedGrades);
-      } catch (error) {
-        console.error("Error parsing JSON file:", error);
-      }
-    };
-
-    reader.readAsText(file);
-  };
   const onSubmit = async () => {
     try {
       deleteAllExceptLast();
@@ -258,24 +232,6 @@ const Calc = () => {
       console.error(err);
     }
   };
-
-  function handleReset() {
-    setGrades({});
-  }
-
-  function exportGrades() {
-    const storedGrades = localStorage.getItem("grades");
-    if (storedGrades) {
-      const gradesJson = JSON.stringify(JSON.parse(storedGrades), null, 2);
-      const blob = new Blob([gradesJson], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "grades.json";
-      link.click();
-      URL.revokeObjectURL(url);
-    }
-  }
 
   return (
     <PageBackground backgroundImage={backgroundImage}>
@@ -295,19 +251,14 @@ const Calc = () => {
                   onChange={(e) =>
                     handleGradeChange(subject.name, e.target.value)
                   }
-                  active={grades[subject.name]?.grade ? 1 : 0}
+                  active={grades[subject.name]?.grade ? 1 : undefined}
                 />
               </div>
             </StyledDiv>
           ))}
         </Container>
 
-        <GradesActions
-          exportGrades={exportGrades}
-          handleImport={handleImport}
-          handleReset={handleReset}
-          onSubmit={onSubmit}
-        />
+        <GradesActions onSubmit={onSubmit} fetchData={getGrade} />
       </Page>
     </PageBackground>
   );

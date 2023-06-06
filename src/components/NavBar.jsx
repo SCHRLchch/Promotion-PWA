@@ -49,8 +49,7 @@ const NavLink = styled(Link)`
   border-radius: 10px;
   transition: background-color 0.3s;
   font-size: 20px;
-  background-color: ${({ active, theme }) =>
-    active ? theme.background : undefined};
+  background-color: ${({ active, theme }) => (active ? theme.background : 0)};
 
   &:hover {
     background-color: ${({ active, theme }) =>
