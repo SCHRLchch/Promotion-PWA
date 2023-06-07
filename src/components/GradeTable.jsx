@@ -89,7 +89,11 @@ const GradeTable = () => {
       gradeSum += grades[i] * weights[i];
       weightSum += weights[i];
     }
-    const requiredGrade = desiredGrade * (weightSum + 1) - gradeSum;
+    const requiredGrade =
+      Number(desiredGrade) * (Number(weightSum) + 1) - Number(gradeSum);
+
+    console.log(`      ${Number(desiredGrade)} * ${Number(weightSum) + 1} -
+        ${Number(gradeSum)} * ${Number(weightSum)}`);
     if (requiredGrade.toFixed(3) > 6.0) {
       return "Impossible";
     }

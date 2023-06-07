@@ -3,11 +3,10 @@ import { auth, googleProvider } from "../config/firebase";
 import {
   createUserWithEmailAndPassword,
   signInWithPopup,
-  signInAnonymously,
+  signInWithEmailAndPassword,
 } from "firebase/auth";
 import styled from "styled-components";
 import { FcGoogle } from "react-icons/fc";
-import { BsFillPersonFill } from "react-icons/bs";
 
 const FormContainer = styled.div`
   box-shadow: 2.8px 2.8px 2.2px rgba(0, 0, 0, 0.042),
@@ -19,6 +18,10 @@ const FormContainer = styled.div`
   padding: 50px;
   backdrop-filter: blur(20px);
   border-radius: 20px;
+
+  @media only screen and (max-width: 800px) {
+    padding: 5px;
+  }
 `;
 
 const Card = styled.div`
@@ -57,26 +60,37 @@ export const Auth = () => {
   const signIn = async () => {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      if (error.code === "auth/email-already-in-use") {
+        alert("The email address is already in use");
+      } else if (error.code === "auth/invalid-email") {
+        alert("The email address is not valid.");
+      } else if (error.code === "auth/operation-not-allowed") {
+        alert("Operation not allowed.");
+      } else if (error.code === "auth/weak-password") {
+        alert("The password is too weak.");
+      }
+    }
+  };
+
+  const logIn = async () => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+      if (error.code === "auth/email-already-in-use") {
+        alert("The email address is already in use");
+      } else if (error.code === "auth/invalid-email") {
+        alert("The email address is not valid.");
+      } else if (error.code === "auth/operation-not-allowed") {
+        alert("Operation not allowed.");
+      } else if (error.code === "auth/weak-password") {
+        alert("The password is too weak.");
+      }
     }
   };
   const signInWithGoogle = async () => {
     try {
       await signInWithPopup(auth, googleProvider);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-  const signInAnonymouslya = async () => {
-    try {
-      const confirmation = window.confirm(
-        "If Annonymous, the data will not be synced. After a log out, the data will be deleted"
-      );
-
-      if (confirmation) {
-        await signInAnonymously(auth);
-      }
     } catch (err) {
       console.error(err);
     }
@@ -109,12 +123,10 @@ export const Auth = () => {
         </div>
         <br />
         <div style={{ display: "flex", justifyContent: "space-around" }}>
-          <Button onClick={signIn}>Sign In</Button>
+          <Button onClick={logIn}>Anmelden</Button>
+          <Button onClick={signIn}>Neue account erstellen</Button>
           <Button onClick={signInWithGoogle}>
             <FcGoogle />
-          </Button>
-          <Button onClick={signInAnonymouslya}>
-            <BsFillPersonFill />
           </Button>
         </div>
       </FormContainer>

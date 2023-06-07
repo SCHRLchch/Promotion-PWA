@@ -257,7 +257,6 @@ const Calc = () => {
             </StyledDiv>
           ))}
         </Container>
-
         <GradesActions onSubmit={onSubmit} fetchData={getGrade} />
       </Page>
     </PageBackground>
