@@ -20,19 +20,16 @@ const Page = styled.div`
   flex-direction: column;
   width: 50%;
   margin: auto;
-  height: 100vh;
+
   border-radius: 20px;
   opacity: 0.7;
   box-shadow: ${({ backgroundImage }) =>
     backgroundImage
       ? "none"
       : "0px 0px 13.8px rgba(0, 0, 0, 0.02), 0px 0px 33.3px rgba(0, 0, 0, 0.028), 0px 0px 62.6px rgba(0, 0, 0, 0.035), 0px 0px 111.7px rgba(0, 0, 0, 0.042), 0px 0px 208.9px rgba(0, 0, 0, 0.05), 0px 0px 500px rgba(0, 0, 0, 0.07)"};
-  @media only screen and (min-height: 700px) {
-    height: 100vh;
-  }
-
-  @media only screen and (max-height: 700px) {
-    height: 100%;
+  height: 120%;
+  @media only screen and (min-width: 800px) {
+    height: 120vh;
   }
 `;
 const Label = styled.label`
@@ -157,6 +154,7 @@ const Setting = ({ selectedTheme, onThemeChange }) => {
         </Button>
         <Title>Note Berechner</Title>
         <GradeTable />
+
         <Button
           onClick={logout}
           style={{
@@ -170,6 +168,13 @@ const Setting = ({ selectedTheme, onThemeChange }) => {
         >
           Log Out
         </Button>
+        <div
+          style={{
+            height: "50px",
+          }}
+        >
+          <br />
+        </div>
       </Page>
     </PageBackground>
   );

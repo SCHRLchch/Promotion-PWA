@@ -109,6 +109,9 @@ const TotalGrade = styled.h1`
 
 const Page = styled.div`
   height: auto;
+  @media only screen and (min-width: 800px) {
+    height: 100vh;
+  }
 `;
 
 const GradeName = styled.label`

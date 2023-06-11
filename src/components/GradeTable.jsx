@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { LineChart, XAxis, YAxis, CartesianGrid, Legend, Line } from "recharts";
+import createTrend from "trendline";
 
 const Table = styled.table`
   border-collapse: collapse;
@@ -31,6 +33,8 @@ const Items = styled.div`
   margin-top: 20px;
   margin-bottom: 70px;
   border-radius: 10px;
+  text-align: center;
+  flex-direction: column;
   @media only screen and (max-height: 1250px) {
     flex-direction: column;
   }
@@ -63,6 +67,18 @@ const Button = styled.button`
   width: 216px;
 `;
 
+const ChartContainer = styled.div`
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  @media only screen and (max-width: 800px) {
+    display: none;
+  }
+`;
+
 const GradeTable = () => {
   const [grades, setGrades] = useState([]);
   const [weights, setWeights] = useState([]);
@@ -92,8 +108,6 @@ const GradeTable = () => {
     const requiredGrade =
       Number(desiredGrade) * (Number(weightSum) + 1) - Number(gradeSum);
 
-    console.log(`      ${Number(desiredGrade)} * ${Number(weightSum) + 1} -
-        ${Number(gradeSum)} * ${Number(weightSum)}`);
     if (requiredGrade.toFixed(3) > 6.0) {
       return "Impossible";
     }
@@ -135,6 +149,25 @@ const GradeTable = () => {
       setWeights([]);
     }
   };
+  const data = grades.map((grade, index) => ({
+    subject: `Note ${index + 1}`,
+    grade: Number(grade),
+  }));
+
+  const numericData = data.map((item, index) => ({
+    subject: index + 1,
+    grade: item.grade,
+  }));
+
+  const trend = createTrend(numericData, "subject", "grade");
+
+  const regressionLineData = [
+    { subject: 1, regression: trend.calcY(1) },
+    {
+      subject: numericData.length,
+      regression: trend.calcY(numericData.length),
+    },
+  ];
 
   return (
     <div>
@@ -178,6 +211,7 @@ const GradeTable = () => {
         <Button onClick={resetGrades} style={{ marginBottom: "10px" }}>
           Noten zurücksetzen
         </Button>
+
         <h3 style={{ marginBottom: "10px" }}>
           Durchschnitt: {calculateAverage()}
         </h3>
@@ -195,6 +229,28 @@ const GradeTable = () => {
           Benötigte Note:
           <span style={{ color: "red" }}> {calculateRequiredGrade()}</span>
         </h3>
+        <ChartContainer>
+          <LineChart width={500} height={300} data={data}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="subject" />
+            <YAxis domain={[0, 6]} />
+            <Legend />
+            <Line dataKey="grade" fill="#8884d8" />
+          </LineChart>
+          <LineChart width={500} height={300} data={data}>
+            <CartesianGrid strokeDasharray="3 3 " />
+            <XAxis dataKey="subject" />
+            <YAxis domain={[0, 6]} />
+            <Legend />
+            <Line
+              type="monotone"
+              data={regressionLineData}
+              dataKey="regression"
+              stroke="#ff7300"
+              dot={false}
+            />
+          </LineChart>
+        </ChartContainer>
       </Items>
     </div>
   );
